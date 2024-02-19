@@ -1,51 +1,13 @@
-.container-buttons {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  align-content: center;
-  justify-content: center;
-  align-items: center;
-}
-
-.submit-button {
-  width: 100%;
-}
-.signup-button {
-  width: 100%;
-}
-
 .main-container {
   max-width: 100% !important;
   background: linear-gradient(to bottom, #1c64c4, #ffffff);
 }
-
-.card-box {
-  max-width: 25.33%;
+.toolbar {
+  background-color: #1c64c4;
+  color: white;
+  font-family: Poppins, sans-serif;
 }
 
-.headline {
-  color: #1c64c4;
-}
-
-.dialog-action-buttons {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.cancel-dialog-button {
-  color: red !important;
-  background-color: white;
-}
-
-.validation-error {
-  color: red;
-  padding-left: 0.0625rem;
-  padding-bottom: 1.25rem;
-}
-
-.alert-bus {
-  position: fixed !important;
-  top: 20px !important;
-  right: 20px !important;
-  z-index: 9999 !important;
+.e-commerce-card {
+  margin-bottom: 20px; /* Espaçamento entre os cartões */
 }

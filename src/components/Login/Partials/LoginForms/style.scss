@@ -1,0 +1,47 @@
+.container-buttons {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+}
+.signup-button {
+  color: white;
+  &-icon {
+    padding-right: 0.375rem;
+  }
+}
+.submit-button {
+  width: 100%;
+}
+.main-container {
+  max-width: 100% !important;
+  background: linear-gradient(to bottom, #1c64c4, #ffffff);
+}
+
+.card-box {
+  max-width: 25.33%;
+  @media screen and (max-width: 768px) {
+    max-width: max-content;
+  }
+}
+.headline {
+  color: #1c64c4;
+  padding: 1rem;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+}
+.hint-register {
+  color: #1c64c4 !important;
+  display: flex !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+}

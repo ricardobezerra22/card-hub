@@ -1,0 +1,16 @@
+.headline {
+  color: #1c64c4;
+  padding: 1rem;
+}
+.dialog-action-buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+.cancel-dialog-button {
+  color: red !important;
+  background-color: white;
+}
+
+.signup-button {
+  width: 100%;
+}
