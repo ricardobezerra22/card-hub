@@ -51,13 +51,6 @@
               >
             </v-card-actions>
           </v-form>
-          <AlertBus
-            class="alert-bus"
-            :title="alertTitle"
-            :text="alertText"
-            :type="alertType"
-            :alert="alert"
-          />
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -74,10 +67,6 @@ export default {
   data() {
     return {
       dialog: false,
-      alert: false,
-      alertType: "",
-      alertTitle: "",
-      alertText: "",
       registerForm: {
         name: "",
         email: "",
@@ -113,9 +102,6 @@ export default {
     };
   },
   methods: {
-    closeAlert() {
-      this.alert = false;
-    },
     isRegisterFormValid() {
       return (
         this.registerForm.name &&
@@ -135,23 +121,22 @@ export default {
       this.dialog = false;
     },
     successRegister() {
-      this.alert = true;
-      this.alertType = "success";
-      this.alertTitle = "Cadastro realizado com sucesso";
-      this.alertText = "Agora realize o login!";
-      setTimeout(() => {
-        this.closeAlert();
-      }, 2500);
+      this.alert = {
+        show: true,
+        type: "success",
+        title: "Cadastro realizado com sucesso",
+        text: "Agora realize o login!",
+      };
+
       this.resetRegister();
     },
     unsuccessRegister(error) {
-      this.alert = true;
-      this.alertTitle = "Erro ao registrar usuário";
-      this.alertText = error.response.data.message;
-      this.alertType = "error";
-      setTimeout(() => {
-        this.closeAlert();
-      }, 2500);
+      this.alert = {
+        show: true,
+        type: "error",
+        title: "Erro ao registrar usuário",
+        text: error.response.data.message,
+      };
     },
     async register() {
       const payload = {
@@ -164,8 +149,10 @@ export default {
         try {
           await userRegister(payload);
           this.successRegister();
+          this.$emit("handlerRegister", this.alert);
         } catch (error) {
           this.unsuccessRegister(error);
+          this.$emit("handlerRegister", this.alert);
         }
       } else {
         this.dialog = true;

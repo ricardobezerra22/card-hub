@@ -4,10 +4,7 @@
       <v-toolbar dark density="comfortable" elevation="3" class="toolbar">
         <v-icon icon="mdi-shopping pl-3" />
         <v-toolbar-title>Marketplace</v-toolbar-title>
-        <LoginForms
-          v-if="!havePermissions"
-          @handlerRegister="successRegister()"
-        />
+        <LoginForms v-if="!havePermissions" @handlerLogin="successRegister" />
         <v-btn v-else @click="userLogout()">
           <v-icon icon="mdi-logout" /> Logout
         </v-btn>
@@ -37,6 +34,12 @@
       </v-card>
     </div>
   </v-container>
+  <AlertBus
+    :title="alert.title"
+    :text="alert.text"
+    :type="alert.type"
+    :alert="alert.show"
+  />
 </template>
 
 <script>
@@ -52,21 +55,31 @@ export default {
     return {
       allCards: [],
       myCards: [],
+      alert: {
+        show: false,
+        type: "",
+        title: "",
+        text: "",
+      },
       havePermissions: false,
-      jwtToken: null,
       tab: null,
     };
   },
   methods: {
+    closeAlert() {
+      this.alert = false;
+    },
     async userLogout() {
       await userLogout();
       this.tab = "all-cards";
       this.getCards();
-      this.lostPermissions();
       this.havePermissions = false;
     },
-    successRegister() {
-      this.tab = "my-cards";
+    async successRegister(alertObj) {
+      this.alert = alertObj;
+      setTimeout(() => {
+        this.closeAlert();
+      }, 2500);
       this.havePermissions = true;
       this.getMyCards();
     },
@@ -84,7 +97,6 @@ export default {
     },
     async getMyCards() {
       const { data } = await getMyCards();
-      this.jwtToken = data.id;
       this.myCards = data.cards.map((myCards) => {
         return {
           ...myCards,
@@ -92,14 +104,11 @@ export default {
       });
     },
   },
-  computed: {
-    _havePermissions() {
-      if (this.jwtToken) {
-        this.havePermissions = true;
-      } else this.havePermissions = false;
-    },
-  },
   mounted() {
+    const storedJwtToken = localStorage.getItem("token");
+    if (storedJwtToken) {
+      this.havePermissions = true;
+    }
     this.getCards();
     this.getMyCards();
   },

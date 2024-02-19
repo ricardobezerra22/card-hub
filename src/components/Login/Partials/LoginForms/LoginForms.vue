@@ -39,25 +39,23 @@
           </v-form>
         </v-card-text>
         <p class="hint-register">Não tem uma conta ainda?</p>
-        <RegisterForm />
+        <RegisterForm @handlerRegister="handleRegister" />
       </v-card>
-      <AlertBus
-        :title="alert.title"
-        :text="alert.text"
-        :type="alert.type"
-        :alert="alert.show"
-      />
     </v-dialog>
+    <AlertBus
+      :title="alert.title"
+      :text="alert.text"
+      :type="alert.type"
+      :alert="alert.show"
+    />
   </v-btn>
 </template>
 <script>
-import AlertBus from "@/components/AlertBus/AlertBus.vue";
 import RegisterForm from "@/components/Login/Partials/RegisterForm/RegisterForm.vue";
 import { userLogin } from "@/services/login/index.js";
 export default {
   name: "LoginForms",
   components: {
-    AlertBus,
     RegisterForm,
   },
   data() {
@@ -98,6 +96,12 @@ export default {
     };
   },
   methods: {
+    handleRegister(alertContent) {
+      this.alert = alertContent;
+      setTimeout(() => {
+        this.closeAlert();
+      }, 2500);
+    },
     closeAlert() {
       this.alert = false;
     },
@@ -122,7 +126,8 @@ export default {
       setTimeout(() => {
         this.closeAlert();
       }, 2500);
-      this.$emit("handlerRegister");
+
+      this.$emit("handlerLogin", this.alert);
     },
     unsuccessRegister(error) {
       this.dialog = false;
@@ -146,8 +151,10 @@ export default {
         try {
           await userLogin(payload);
           this.successRegister();
+          this.$emit("handlerLogin", this.alert);
         } catch (error) {
           this.unsuccessRegister(error);
+          this.$emit("handlerLogin", this.alert);
         }
       }
     },
