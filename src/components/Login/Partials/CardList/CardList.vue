@@ -24,7 +24,35 @@
               </template>
             </v-tooltip>
 
-            <v-btn color="primary"> Solicitar troca</v-btn>
+            <v-btn
+              v-if="isUserHavePerms"
+              color="primary"
+              @click="addCardToDeck(card)"
+            >
+              Solicitar troca</v-btn
+            >
+            <div v-else>
+              <v-btn color="yellow darken-1" @click="showSnackbar()">
+                <v-icon left>mdi-alert</v-icon>
+                Negociar
+              </v-btn>
+              <v-snackbar v-model="snackbar" vertical>
+                <div class="text-subtitle-1 pb-2">Restrição</div>
+                <p>
+                  Você não pode solicitar troca ou adicionar essa carta ao seu
+                  deck. Faça login ou cadastro para negocia-la.
+                </p>
+                <template v-slot:actions>
+                  <v-btn
+                    color="yellow darken-1"
+                    variant="text"
+                    @click="closeSnackbar()"
+                  >
+                    Fechar
+                  </v-btn>
+                </template>
+              </v-snackbar>
+            </div>
           </div>
         </v-card>
       </v-col>
@@ -32,10 +60,17 @@
   </v-container>
 </template>
 <script>
+import { requestTrade } from "@/services/login/index.js";
 export default {
   name: "CardList",
   props: {
     cards: Array,
+    isUserHavePerms: Boolean,
+  },
+  data() {
+    return {
+      snackbar: false,
+    };
   },
   methods: {
     truncatedDescription(value) {
@@ -45,6 +80,22 @@ export default {
       } else {
         return value;
       }
+    },
+    showSnackbar() {
+      this.snackbar = true;
+    },
+    closeSnackbar() {
+      this.snackbar = false;
+    },
+    async addCardToDeck(card) {
+      const payload = {
+        cards: [
+          { cardId: "18853810-4a87-44e1-8e67-0e7355186ba5", type: "OFFERING" },
+          { cardId: card.id, type: "RECEIVING" },
+        ],
+      };
+      await requestTrade(payload);
+      console.log(payload);
     },
   },
 };

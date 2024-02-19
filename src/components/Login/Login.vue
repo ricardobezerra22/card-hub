@@ -10,7 +10,7 @@
         </v-btn>
       </v-toolbar>
       <v-card>
-        <v-tabs v-model="tab" bg-color="primary">
+        <v-tabs class="tabs" v-model="tab" bg-color="primary">
           <v-tab value="all-cards">Todas as Cartas</v-tab>
           <v-tab v-if="havePermissions" value="my-cards">Minhas Cartas</v-tab>
           <v-tab v-if="havePermissions" value="request-cards"
@@ -21,14 +21,16 @@
         <v-card-text>
           <v-window v-model="tab">
             <v-window-item value="all-cards">
-              <CardList :cards="allCards" />
+              <CardList :isUserHavePerms="havePermissions" :cards="allCards" />
             </v-window-item>
 
             <v-window-item value="my-cards">
               <CardList :cards="myCards" />
             </v-window-item>
 
-            <v-window-item value="request-cards"> Solicitações </v-window-item>
+            <v-window-item value="request-cards">
+              <RequestedCards :cardss="tradeCards" />
+            </v-window-item>
           </v-window>
         </v-card-text>
       </v-card>
@@ -40,21 +42,30 @@
     :type="alert.type"
     :alert="alert.show"
   />
+  <v-btn @click="getRequestedCards">getRequestedCards</v-btn>
 </template>
 
 <script>
 import LoginForms from "./Partials/LoginForms/LoginForms.vue";
 import CardList from "@/components/Login/Partials/CardList/CardList.vue";
-import { getAllCards, getMyCards, userLogout } from "@/services/login/index.js";
+import RequestedCards from "@/components/Login/Partials/RequestedCards/RequestedCards.vue";
+import {
+  getAllCards,
+  getMyCards,
+  userLogout,
+  getRequestedCards,
+} from "@/services/login/index.js";
 export default {
   components: {
     LoginForms,
     CardList,
+    RequestedCards,
   },
   data() {
     return {
       allCards: [],
       myCards: [],
+      tradeCards: [],
       alert: {
         show: false,
         type: "",
@@ -94,6 +105,7 @@ export default {
           ...card,
         };
       });
+      console.log("todes", this.allCards);
     },
     async getMyCards() {
       const { data } = await getMyCards();
@@ -102,6 +114,23 @@ export default {
           ...myCards,
         };
       });
+    },
+    async getRequestedCards() {
+      const payload = {
+        rpp: 10,
+        page: 1,
+      };
+      const { data } = await getRequestedCards(payload);
+      this.tradeCards = data.list.map((trade) => {
+        return {
+          tradeCards: trade.tradeCards.map((tradeCard) => {
+            return {
+              ...tradeCard,
+            };
+          }),
+        };
+      });
+      console.log("traded", this.tradeCards);
     },
   },
   mounted() {

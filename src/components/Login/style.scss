@@ -1,5 +1,6 @@
 .main-container {
   max-width: 100% !important;
+  padding: 0rem !important;
   background: linear-gradient(to bottom, #1c64c4, #ffffff);
 }
 .toolbar {
@@ -10,4 +11,10 @@
 
 .e-commerce-card {
   margin-bottom: 20px; /* Espaçamento entre os cartões */
+}
+.tabs {
+  display: flex;
+}
+:deep(.v-slide-group__content) {
+  justify-content: space-between;
 }

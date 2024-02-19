@@ -23,3 +23,12 @@ export async function getAllCards(payload) {
   const url = `/cards?${queryParams}`;
   return await api.get(url);
 }
+
+export async function requestTrade(payload) {
+  return await api.post("/trades", payload);
+}
+export async function getRequestedCards(payload) {
+  const queryParams = new URLSearchParams(payload).toString();
+  const url = `/trades?${queryParams}`;
+  return await api.get(url);
+}

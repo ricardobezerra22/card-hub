@@ -1,0 +1,21 @@
+.e-commerce-card {
+  /* Espaçamento entre os cartões */
+
+  height: 400px; /* Altura fixa para os cartões */
+  overflow-y: auto; /* Adiciona barra de rolagem vertical se o conteúdo exceder a altura */
+}
+
+.card-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding-top: 11px;
+}
+
+.subtitle {
+  white-space: break-spaces;
+}
