@@ -4,7 +4,9 @@
       <v-toolbar dark density="comfortable" elevation="3" class="toolbar">
         <v-icon icon="mdi-shopping pl-3" />
         <v-toolbar-title>Marketplace</v-toolbar-title>
-
+        <v-toolbar-title v-if="havePermissions"
+          >Bem-vindo {{ username }} <v-icon icon="mdi-heart"
+        /></v-toolbar-title>
         <LoginForms v-if="!havePermissions" @handlerLogin="successRegister" />
 
         <v-btn v-else @click="userLogout()">
@@ -53,7 +55,7 @@
     :type="alert.type"
     :alert="alert.show"
   />
-  <v-pagination></v-pagination>
+  <v-pagination v-model="page" :length="rpp" rounded="circle"></v-pagination>
 </template>
 
 <script>
@@ -78,12 +80,15 @@ export default {
       allCards: [],
       myCards: [],
       tradeCards: [],
+      page: 0,
+      rpp: 10,
       alert: {
         show: false,
         type: "",
         title: "",
         text: "",
       },
+      username: "",
       havePermissions: false,
       tab: null,
       dialog: false,
@@ -120,17 +125,25 @@ export default {
       });
     },
     async getMyCards() {
-      const { data } = await getMyCards();
-      this.myCards = data.cards.map((myCards) => {
-        return {
-          ...myCards,
-        };
-      });
+      try {
+        const { data } = await getMyCards();
+        this.username = data.name;
+        this.rpp = data.rpp;
+        this.page = data.page;
+
+        this.myCards = data.cards.map((myCards) => {
+          return {
+            ...myCards,
+          };
+        });
+      } catch (error) {
+        console.log(error);
+      }
     },
     async getRequestedCards() {
       const payload = {
-        rpp: 10,
-        page: 1,
+        rpp: this.rpp,
+        page: this.page,
       };
       const { data } = await getRequestedCards(payload);
       this.tradeCards = data.list.map((trade) => {
@@ -144,7 +157,6 @@ export default {
       });
     },
     resultOfRequest(alert) {
-      console.log("ta rolando");
       this.alert = {
         ...alert,
       };

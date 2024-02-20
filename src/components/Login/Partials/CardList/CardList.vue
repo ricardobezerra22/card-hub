@@ -9,6 +9,10 @@
         md="4"
         lg="3"
       >
+        <div class="timeStamp">
+          <span>{{ dateText(card.createdAt) }}</span>
+        </div>
+
         <v-card elevation="3" class="e-commerce-card">
           <v-img :src="card.imageUrl" aspect-ratio="1.1"></v-img>
           <div class="card-container">
@@ -95,8 +99,16 @@
           color="blue-grey-lighten-2"
           item-title="title"
           item-value="id"
+          @focus="getMyCards"
           variant="solo"
         >
+          <template v-slot:loader>
+            <v-progress-linear
+              v-if="loading"
+              indeterminate
+              color="primary"
+            ></v-progress-linear>
+          </template>
           <template v-slot:chip="{ props, item }">
             <v-chip
               v-bind="props"
@@ -104,7 +116,6 @@
               :text="item.raw.title"
             ></v-chip>
           </template>
-
           <template v-slot:item="{ props, item }">
             <v-list-item
               v-bind="props"
@@ -113,8 +124,7 @@
               :subtitle="truncatedDescription(item.raw.description)"
             ></v-list-item>
           </template>
-          ></v-autocomplete
-        >
+        </v-autocomplete>
 
         <v-card-actions class="dialog-action-buttons">
           <v-btn color="primary" type="submit" @click="requestCard"
@@ -137,6 +147,7 @@ import {
   addCardToDeck,
   getMyCards,
 } from "@/services/login/index.js";
+import { calculateTimePassed } from "@/helpers/strings/date.js";
 export default {
   name: "CardList",
   props: {
@@ -149,6 +160,7 @@ export default {
       selectedOffering: null,
       snackbar: false,
       requestModal: false,
+      loading: false,
       cardId: "",
       cardOffering: [],
     };
@@ -161,6 +173,17 @@ export default {
       } else {
         return value;
       }
+    },
+    dateText(date) {
+      const formattedDate = this.conversionToLocale(date);
+      return `Criada ${calculateTimePassed(formattedDate)}`;
+    },
+    conversionToLocale(dateISO8601) {
+      const date = new Date(dateISO8601);
+      const year = date.getUTCFullYear();
+      const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+      const day = String(date.getUTCDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
     },
     showSnackbar() {
       this.snackbar = true;
@@ -223,23 +246,25 @@ export default {
       } catch (error) {
         this.handlerAddCard(false, error);
         this.$emit("handlerAdition", this.alert);
-        console.log(error);
       }
     },
     async getMyCards() {
-      const { data } = await getMyCards();
-      this.cardOffering = data.cards.map((myCards) => {
-        return {
-          title: myCards.name,
-          id: myCards.id,
-          image: myCards.imageUrl,
-          description: myCards.description,
-        };
-      });
+      this.loading = true;
+      try {
+        const { data } = await getMyCards();
+        this.cardOffering = data.cards.map((myCards) => {
+          return {
+            title: myCards.name,
+            id: myCards.id,
+            image: myCards.imageUrl,
+            description: myCards.description,
+          };
+        });
+      } catch (error) {
+        console.log(error);
+      }
+      this.loading = false;
     },
-  },
-  mounted() {
-    this.getMyCards();
   },
 };
 </script>
