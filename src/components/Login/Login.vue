@@ -13,17 +13,26 @@
       </v-toolbar>
       <v-card>
         <v-tabs class="tabs" v-model="tab" background-color="primary">
-          <v-tab value="all-cards">Todas as Cartas</v-tab>
-          <v-tab v-if="havePermissions" value="my-cards">Minhas Cartas</v-tab>
+          <v-tab value="all-cards"
+            ><v-icon icon="mdi-cards" />Todas as Cartas</v-tab
+          >
+          <v-tab v-if="havePermissions" value="my-cards"
+            ><v-icon icon="mdi-account-card" />Minhas Cartas</v-tab
+          >
           <v-tab v-if="havePermissions" value="request-cards"
-            >Solicitações</v-tab
+            ><v-icon icon="mdi-card-account-mail " /> Solicitações</v-tab
           >
         </v-tabs>
 
         <v-card-text>
           <v-window v-model="tab">
             <v-window-item value="all-cards">
-              <CardList :isUserHavePerms="havePermissions" :cards="allCards" />
+              <CardList
+                :isUserHavePerms="havePermissions"
+                :cards="allCards"
+                @handlerRequest="resultOfRequest"
+                @handlerAdition="resultOfAdition"
+              />
             </v-window-item>
 
             <v-window-item value="my-cards">
@@ -77,11 +86,14 @@ export default {
       },
       havePermissions: false,
       tab: null,
+      dialog: false,
     };
   },
   methods: {
     closeAlert() {
-      this.alert = false;
+      setTimeout(() => {
+        this.alert = false;
+      }, 2500);
     },
     async userLogout() {
       await userLogout();
@@ -91,9 +103,7 @@ export default {
     },
     async successRegister(alertObj) {
       this.alert = alertObj;
-      setTimeout(() => {
-        this.closeAlert();
-      }, 2500);
+      this.closeAlert();
       this.havePermissions = true;
       this.getMyCards();
     },
@@ -132,7 +142,19 @@ export default {
           }),
         };
       });
-      console.log("traded", this.tradeCards);
+    },
+    resultOfRequest(alert) {
+      console.log("ta rolando");
+      this.alert = {
+        ...alert,
+      };
+      this.closeAlert();
+    },
+    resultOfAdition(alert) {
+      this.alert = {
+        ...alert,
+      };
+      this.closeAlert();
     },
   },
   mounted() {

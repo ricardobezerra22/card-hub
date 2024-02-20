@@ -9,12 +9,12 @@
   font-family: Poppins, sans-serif;
 }
 
-.e-commerce-card {
-  margin-bottom: 20px; /* Espaçamento entre os cartões */
-}
 .tabs {
   display: flex;
 }
 :deep(.v-slide-group__content) {
   justify-content: space-between;
+}
+:deep(.v-btn__content) {
+  gap: 0.375rem;
 }

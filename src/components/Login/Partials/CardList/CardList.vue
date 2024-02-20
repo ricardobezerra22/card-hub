@@ -33,10 +33,10 @@
                 :max-width="125"
                 color="primary"
                 class="action-buttons-btn"
-                @click="requestCard(card)"
+                @click="openRequestTradeModal(card)"
               >
-                Solicitar troca</v-btn
-              >
+                Solicitar troca
+              </v-btn>
             </div>
 
             <div v-else-if="!isUserHavePerms && !isOwnedPage">
@@ -72,10 +72,71 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-dialog
+      v-model="requestModal"
+      transition="dialog-bottom-transition"
+      width="400"
+    >
+      <v-card :elevation="3">
+        <v-card-title class="headline text-center"
+          >Solicitar troca</v-card-title
+        >
+        <v-card-subtitle
+          >Ofereça uma carta da sua coleção para efetuar a
+          troca</v-card-subtitle
+        >
+        <v-autocomplete
+          v-model="selectedOffering"
+          class="dialog-autocomplete"
+          label="Selecione a carta que deseja oferecer"
+          :items="cardOffering"
+          chips
+          closable-chips
+          color="blue-grey-lighten-2"
+          item-title="title"
+          item-value="id"
+          variant="solo"
+        >
+          <template v-slot:chip="{ props, item }">
+            <v-chip
+              v-bind="props"
+              :prepend-avatar="item.raw.image"
+              :text="item.raw.title"
+            ></v-chip>
+          </template>
+
+          <template v-slot:item="{ props, item }">
+            <v-list-item
+              v-bind="props"
+              :prepend-avatar="item.raw.image"
+              :title="item.raw.title"
+              :subtitle="truncatedDescription(item.raw.description)"
+            ></v-list-item>
+          </template>
+          ></v-autocomplete
+        >
+
+        <v-card-actions class="dialog-action-buttons">
+          <v-btn color="primary" type="submit" @click="requestCard"
+            >Concluir</v-btn
+          >
+          <v-btn
+            color="error"
+            class="cancel-dialog-button"
+            @click="closeRequestModal"
+            >Cancelar</v-btn
+          >
+        </v-card-actions></v-card
+      ></v-dialog
+    >
   </v-container>
 </template>
 <script>
-import { requestTrade, addCardToDeck } from "@/services/login/index.js";
+import {
+  requestTrade,
+  addCardToDeck,
+  getMyCards,
+} from "@/services/login/index.js";
 export default {
   name: "CardList",
   props: {
@@ -85,7 +146,11 @@ export default {
   },
   data() {
     return {
+      selectedOffering: null,
       snackbar: false,
+      requestModal: false,
+      cardId: "",
+      cardOffering: [],
     };
   },
   methods: {
@@ -103,15 +168,49 @@ export default {
     closeSnackbar() {
       this.snackbar = false;
     },
-    async requestCard(card) {
+    openRequestTradeModal(card) {
+      this.cardId = card.id;
+      this.requestModal = true;
+    },
+    closeRequestModal() {
+      this.requestModal = false;
+    },
+    handlerRequest(success, error) {
+      this.alert = {
+        show: true,
+        type: success ? "success" : "error",
+        title: success ? "Troca solicitada!" : "Erro ao solicitar troca!",
+        text: success
+          ? "Agora vá em solicitações!'"
+          : error.response.data.message,
+      };
+    },
+    async requestCard() {
       const payload = {
         cards: [
-          { cardId: "18853810-4a87-44e1-8e67-0e7355186ba5", type: "OFFERING" },
-          { cardId: card.id, type: "RECEIVING" },
+          { cardId: this.selectedOffering, type: "OFFERING" },
+          { cardId: this.cardId, type: "RECEIVING" },
         ],
       };
-      await requestTrade(payload);
-      console.log(payload);
+      try {
+        await requestTrade(payload);
+        this.handlerRequest(true);
+        this.$emit("handlerRequest", this.alert);
+        this.requestModal = false;
+      } catch (error) {
+        handlerRequest(false, error);
+        this.$emit("handlerRequest", this.alert);
+      }
+    },
+    handlerAddCard(success, error) {
+      this.alert = {
+        show: true,
+        type: success ? "success" : "error",
+        title: success ? "Carta adicionada!" : "Erro ao adicionar a carta!",
+        text: success
+          ? "Agora pode visualizar em 'Minhas cartas!'"
+          : error.response.data.message,
+      };
     },
     async addCard(card) {
       const payload = {
@@ -119,10 +218,28 @@ export default {
       };
       try {
         await addCardToDeck(payload);
+        this.handlerAddCard(true);
+        this.$emit("handlerAdition", this.alert);
       } catch (error) {
+        this.handlerAddCard(false, error);
+        this.$emit("handlerAdition", this.alert);
         console.log(error);
       }
     },
+    async getMyCards() {
+      const { data } = await getMyCards();
+      this.cardOffering = data.cards.map((myCards) => {
+        return {
+          title: myCards.name,
+          id: myCards.id,
+          image: myCards.imageUrl,
+          description: myCards.description,
+        };
+      });
+    },
+  },
+  mounted() {
+    this.getMyCards();
   },
 };
 </script>

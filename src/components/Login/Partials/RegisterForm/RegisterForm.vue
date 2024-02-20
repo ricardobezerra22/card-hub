@@ -1,13 +1,16 @@
 <template>
   <v-btn variant="text" color="primary" class="signup-button">
-    Criar conta<v-dialog
+    {{ actionButtons.createAccount
+    }}<v-dialog
       v-model="dialog"
       transition="dialog-bottom-transition"
       activator="parent"
       width="400"
     >
       <v-card elevation="3">
-        <v-card-title class="headline text-center">Cadastro</v-card-title>
+        <v-card-title class="headline text-center">{{
+          registerAccount
+        }}</v-card-title>
         <v-card-text>
           <v-form @submit.prevent="register">
             <v-text-field
@@ -42,12 +45,14 @@
               required
             ></v-text-field>
             <v-card-actions class="dialog-action-buttons">
-              <v-btn color="primary" type="submit">Concluir</v-btn>
+              <v-btn color="primary" type="submit">{{
+                actionButtons.submit
+              }}</v-btn>
               <v-btn
                 color="error"
                 class="cancel-dialog-button"
                 @click="resetRegister"
-                >Cancelar</v-btn
+                >{{ actionButtons.cancel }}</v-btn
               >
             </v-card-actions>
           </v-form>
@@ -67,6 +72,13 @@ export default {
   data() {
     return {
       dialog: false,
+      registerAccount: "Registro",
+      actionButtons: {
+        createAccount: "Criar Conta",
+        submit: "Concluir",
+        cancel: "Cancelar",
+      },
+
       registerForm: {
         name: "",
         email: "",
@@ -120,23 +132,18 @@ export default {
       };
       this.dialog = false;
     },
-    successRegister() {
+    handlerRegister(success, error) {
       this.alert = {
         show: true,
-        type: "success",
-        title: "Cadastro realizado com sucesso",
-        text: "Agora realize o login!",
+        type: success ? "success" : "error",
+        title: success
+          ? "Cadastro realizado com sucesso!"
+          : "Erro ao registrar usuário!",
+        text: success ? "Agora realize o login!'" : error.response.data.message,
       };
-
-      this.resetRegister();
-    },
-    unsuccessRegister(error) {
-      this.alert = {
-        show: true,
-        type: "error",
-        title: "Erro ao registrar usuário",
-        text: error.response.data.message,
-      };
+      if (success) {
+        this.resetRegister();
+      }
     },
     async register() {
       const payload = {
@@ -148,10 +155,10 @@ export default {
       if (this.isRegisterFormValid()) {
         try {
           await userRegister(payload);
-          this.successRegister();
+          this.handlerRegister(true);
           this.$emit("handlerRegister", this.alert);
         } catch (error) {
-          this.unsuccessRegister(error);
+          this.handlerRegister(false, error);
           this.$emit("handlerRegister", this.alert);
         }
       } else {
