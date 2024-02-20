@@ -4,13 +4,15 @@
       <v-toolbar dark density="comfortable" elevation="3" class="toolbar">
         <v-icon icon="mdi-shopping pl-3" />
         <v-toolbar-title>Marketplace</v-toolbar-title>
+
         <LoginForms v-if="!havePermissions" @handlerLogin="successRegister" />
+
         <v-btn v-else @click="userLogout()">
           <v-icon icon="mdi-logout" /> Logout
         </v-btn>
       </v-toolbar>
       <v-card>
-        <v-tabs class="tabs" v-model="tab" bg-color="primary">
+        <v-tabs class="tabs" v-model="tab" background-color="primary">
           <v-tab value="all-cards">Todas as Cartas</v-tab>
           <v-tab v-if="havePermissions" value="my-cards">Minhas Cartas</v-tab>
           <v-tab v-if="havePermissions" value="request-cards"
@@ -25,7 +27,7 @@
             </v-window-item>
 
             <v-window-item value="my-cards">
-              <CardList :cards="myCards" />
+              <CardList :isOwnedPage="true" :cards="myCards" />
             </v-window-item>
 
             <v-window-item value="request-cards">
@@ -42,11 +44,12 @@
     :type="alert.type"
     :alert="alert.show"
   />
-  <v-btn @click="getRequestedCards">getRequestedCards</v-btn>
+  <v-pagination></v-pagination>
 </template>
 
 <script>
 import LoginForms from "./Partials/LoginForms/LoginForms.vue";
+
 import CardList from "@/components/Login/Partials/CardList/CardList.vue";
 import RequestedCards from "@/components/Login/Partials/RequestedCards/RequestedCards.vue";
 import {
@@ -105,7 +108,6 @@ export default {
           ...card,
         };
       });
-      console.log("todes", this.allCards);
     },
     async getMyCards() {
       const { data } = await getMyCards();

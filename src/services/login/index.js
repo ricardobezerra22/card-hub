@@ -27,6 +27,9 @@ export async function getAllCards(payload) {
 export async function requestTrade(payload) {
   return await api.post("/trades", payload);
 }
+export async function addCardToDeck(payload) {
+  return await api.post("/me/cards", payload);
+}
 export async function getRequestedCards(payload) {
   const queryParams = new URLSearchParams(payload).toString();
   const url = `/trades?${queryParams}`;

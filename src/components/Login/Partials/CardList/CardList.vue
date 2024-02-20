@@ -10,8 +10,6 @@
         lg="3"
       >
         <v-card elevation="3" class="e-commerce-card">
-          <!-- Conteúdo do cartão (item) -->
-
           <v-img :src="card.imageUrl" aspect-ratio="1.1"></v-img>
           <div class="card-container">
             <h3>{{ card.name }}</h3>
@@ -23,15 +21,25 @@
                 }}</v-card-subtitle>
               </template>
             </v-tooltip>
+            <div v-if="isUserHavePerms" class="action-buttons">
+              <v-btn
+                :max-width="125"
+                class="action-buttons-btn"
+                color="primary"
+                @click="addCard(card)"
+                >Adicionar Carta</v-btn
+              >
+              <v-btn
+                :max-width="125"
+                color="primary"
+                class="action-buttons-btn"
+                @click="requestCard(card)"
+              >
+                Solicitar troca</v-btn
+              >
+            </div>
 
-            <v-btn
-              v-if="isUserHavePerms"
-              color="primary"
-              @click="addCardToDeck(card)"
-            >
-              Solicitar troca</v-btn
-            >
-            <div v-else>
+            <div v-else-if="!isUserHavePerms && !isOwnedPage">
               <v-btn color="yellow darken-1" @click="showSnackbar()">
                 <v-icon left>mdi-alert</v-icon>
                 Negociar
@@ -53,6 +61,13 @@
                 </template>
               </v-snackbar>
             </div>
+            <v-btn
+              v-if="isOwnedPage"
+              :disabled="true"
+              class="action-buttons-btn"
+              color="primary"
+              >Adquirida</v-btn
+            >
           </div>
         </v-card>
       </v-col>
@@ -60,12 +75,13 @@
   </v-container>
 </template>
 <script>
-import { requestTrade } from "@/services/login/index.js";
+import { requestTrade, addCardToDeck } from "@/services/login/index.js";
 export default {
   name: "CardList",
   props: {
     cards: Array,
     isUserHavePerms: Boolean,
+    isOwnedPage: Boolean,
   },
   data() {
     return {
@@ -87,7 +103,7 @@ export default {
     closeSnackbar() {
       this.snackbar = false;
     },
-    async addCardToDeck(card) {
+    async requestCard(card) {
       const payload = {
         cards: [
           { cardId: "18853810-4a87-44e1-8e67-0e7355186ba5", type: "OFFERING" },
@@ -96,6 +112,16 @@ export default {
       };
       await requestTrade(payload);
       console.log(payload);
+    },
+    async addCard(card) {
+      const payload = {
+        cardIds: [card.id],
+      };
+      try {
+        await addCardToDeck(payload);
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 };

@@ -19,3 +19,21 @@
 .subtitle {
   white-space: break-spaces;
 }
+
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  &-btn {
+    text-transform: none;
+  }
+
+  @media screen and (max-width: 350px) {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
