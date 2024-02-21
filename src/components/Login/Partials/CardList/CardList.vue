@@ -9,138 +9,117 @@
         md="4"
         lg="3"
       >
-        <div class="timeStamp">
-          <span>{{ dateText(card.createdAt) }}</span>
-        </div>
-
-        <v-card elevation="3" class="e-commerce-card">
-          <div class="image">
-            <v-img :src="card.imageUrl" aspect-ratio="2"></v-img>
+        <v-skeleton-loader
+          v-if="_isLoading"
+          type="list-item-two-line"
+        ></v-skeleton-loader>
+        <div v-else class="cards">
+          <div class="timeStamp">
+            <span>{{ dateText(card.createdAt) }}</span>
           </div>
-          <div class="card-container">
-            <h3>{{ card.name }}</h3>
-
-            <v-tooltip :text="card.description">
-              <template v-slot:activator="{ props }">
-                <v-card-subtitle v-bind="props" class="subtitle">{{
-                  truncatedDescription(card.description)
-                }}</v-card-subtitle>
-              </template>
-            </v-tooltip>
-            <div v-if="isUserHavePerms" class="action-buttons">
-              <v-btn
-                :max-width="125"
-                class="action-buttons-btn"
-                color="primary"
-                @click="addCard(card)"
-                >Adicionar Carta</v-btn
-              >
-              <v-btn
-                :max-width="125"
-                color="primary"
-                class="action-buttons-btn"
-                @click="openRequestTradeModal(card)"
-              >
-                Solicitar troca
-              </v-btn>
+          <v-card class="e-commerce-card" :loading="loading || externalLoading">
+            <div class="image">
+              <v-img :src="card.imageUrl" aspect-ratio="2"></v-img>
             </div>
+            <div class="card-container">
+              <h3>{{ card.name }}</h3>
 
-            <div v-else-if="!isUserHavePerms && !isOwnedPage">
-              <v-btn color="yellow darken-1" @click="showSnackbar()">
-                <v-icon left>mdi-alert</v-icon>
-                Negociar
-              </v-btn>
-              <v-snackbar v-model="snackbar" vertical>
-                <div class="text-subtitle-1 pb-2">Restrição</div>
-                <p>
-                  Você não pode solicitar troca ou adicionar essa carta ao seu
-                  deck. Faça login ou cadastro para negocia-la.
-                </p>
-                <template v-slot:actions>
-                  <v-btn
-                    color="yellow darken-1"
-                    variant="text"
-                    @click="closeSnackbar()"
-                  >
-                    Fechar
-                  </v-btn>
+              <v-tooltip :text="card.description">
+                <template v-slot:activator="{ props }">
+                  <v-card-subtitle v-bind="props" class="subtitle">{{
+                    truncatedDescription(card.description)
+                  }}</v-card-subtitle>
                 </template>
-              </v-snackbar>
+              </v-tooltip>
+              <div v-if="isUserHavePerms" class="action-buttons">
+                <DefaultButton
+                  :buttonText="aditionButton"
+                  :loading="loading"
+                  @click="addCard(card)"
+                />
+                <DefaultButton
+                  :buttonText="requestButton"
+                  @click="openRequestTradeModal(card)"
+                />
+              </div>
+
+              <div v-else-if="!isUserHavePerms && !isOwnedPage">
+                <DefaultButton
+                  :buttonText="negotiateButton"
+                  :color="'yellow darken-1'"
+                  @click="showSnackbar()"
+                  ><v-icon left>mdi-alert</v-icon></DefaultButton
+                >
+
+                <v-snackbar v-model="snackbar" vertical>
+                  <div class="text-subtitle-1 pb-2">Restrição</div>
+                  <p>
+                    {{ snackbarWarning }}
+                  </p>
+                  <template v-slot:actions>
+                    <DefaultButton
+                      :buttonText="closeNegotiateButton"
+                      :color="'yellow darken-1'"
+                      variant="text"
+                      @click="closeSnackbar()"
+                    />
+                  </template>
+                </v-snackbar>
+              </div>
+              <DefaultButton
+                v-if="isOwnedPage"
+                :disabled="true"
+                :buttonText="ownedCard"
+              />
             </div>
-            <v-btn
-              v-if="isOwnedPage"
-              :disabled="true"
-              class="action-buttons-btn"
-              color="primary"
-              >Adquirida</v-btn
-            >
-          </div>
-        </v-card>
+          </v-card>
+        </div>
       </v-col>
     </v-row>
-    <v-dialog
+    <DefaultModal
       v-model="requestModal"
-      transition="dialog-bottom-transition"
-      width="400"
+      :title="requestModalTitle"
+      :subtitle="requestModalSubtitle"
+      @closeModal="closeRequestModal"
+      @submit="requestCard"
     >
-      <v-card :elevation="3">
-        <v-card-title class="headline text-center"
-          >Solicitar troca</v-card-title
-        >
-        <v-card-subtitle
-          >Ofereça uma carta da sua coleção para efetuar a
-          troca</v-card-subtitle
-        >
-        <v-autocomplete
-          v-model="selectedOffering"
-          class="dialog-autocomplete"
-          label="Selecione a carta que deseja oferecer"
-          :items="cardOffering"
-          chips
-          closable-chips
-          color="blue-grey-lighten-2"
-          item-title="title"
-          item-value="id"
-          @focus="getMyCards"
-          variant="solo"
-        >
-          <template v-slot:loader>
-            <v-progress-linear
-              v-if="loading"
-              indeterminate
-              color="primary"
-            ></v-progress-linear>
-          </template>
-          <template v-slot:chip="{ props, item }">
-            <v-chip
-              v-bind="props"
-              :prepend-avatar="item.raw.image"
-              :text="item.raw.title"
-            ></v-chip>
-          </template>
-          <template v-slot:item="{ props, item }">
-            <v-list-item
-              v-bind="props"
-              :prepend-avatar="item.raw.image"
-              :title="item.raw.title"
-              :subtitle="truncatedDescription(item.raw.description)"
-            ></v-list-item>
-          </template>
-        </v-autocomplete>
-
-        <v-card-actions class="dialog-action-buttons">
-          <v-btn color="primary" type="submit" @click="requestCard"
-            >Concluir</v-btn
-          >
-          <v-btn
-            color="error"
-            class="cancel-dialog-button"
-            @click="closeRequestModal"
-            >Cancelar</v-btn
-          >
-        </v-card-actions></v-card
-      ></v-dialog
-    >
+      <v-autocomplete
+        v-model="selectedOffering"
+        class="dialog-autocomplete"
+        label="Selecione a carta que deseja oferecer"
+        :items="cardOffering"
+        chips
+        closable-chips
+        color="blue-grey-lighten-2"
+        item-title="title"
+        item-value="id"
+        @focus="getMyCards"
+        variant="solo"
+      >
+        <template v-slot:loader>
+          <v-progress-linear
+            v-if="loading"
+            indeterminate
+            color="primary"
+          ></v-progress-linear>
+        </template>
+        <template v-slot:chip="{ props, item }">
+          <v-chip
+            v-bind="props"
+            :prepend-avatar="item.raw.image"
+            :text="item.raw.title"
+          ></v-chip>
+        </template>
+        <template v-slot:item="{ props, item }">
+          <v-list-item
+            v-bind="props"
+            :prepend-avatar="item.raw.image"
+            :title="item.raw.title"
+            :subtitle="truncatedDescription(item.raw.description)"
+          ></v-list-item>
+        </template>
+      </v-autocomplete>
+    </DefaultModal>
   </v-container>
 </template>
 <script>
@@ -149,13 +128,20 @@ import {
   addCardToDeck,
   getMyCards,
 } from "@/services/login/index.js";
-import { calculateTimePassed } from "@/helpers/strings/date.js";
+import DefaultModal from "@/components/DefaultModal/DefaultModal.vue";
+import DefaultButton from "@/components/DefaultButton/DefaultButton.vue";
+import { compareTime } from "@/helpers/strings/date.js";
 export default {
   name: "CardList",
+  components: {
+    DefaultModal,
+    DefaultButton,
+  },
   props: {
     cards: Array,
     isUserHavePerms: Boolean,
     isOwnedPage: Boolean,
+    externalLoading: Boolean,
   },
   data() {
     return {
@@ -165,6 +151,16 @@ export default {
       loading: false,
       cardId: "",
       cardOffering: [],
+      ownedCard: "Adquirida",
+      snackbarWarning:
+        "Você não pode solicitar troca ou adicionar essa carta ao seudeck. Faça login ou cadastro para negocia-la.",
+      negotiateButton: "Negociar",
+      closeNegotiateButton: "Fechar",
+      aditionButton: "Adicionar Carta",
+      requestButton: "Solicitar troca",
+      requestModalTitle: "Solicitar troca",
+      requestModalSubtitle:
+        "Ofereça uma carta da sua coleção para efetuar a troca.",
     };
   },
   methods: {
@@ -177,8 +173,7 @@ export default {
       }
     },
     dateText(date) {
-      const formattedDate = this.conversionToLocale(date);
-      return `Criada ${calculateTimePassed(formattedDate)}`;
+      return `Criada ${compareTime(date)}`;
     },
     conversionToLocale(dateISO8601) {
       const date = new Date(dateISO8601);
@@ -211,6 +206,7 @@ export default {
       };
     },
     async requestCard() {
+      this.loading = true;
       const payload = {
         cards: [
           { cardId: this.selectedOffering, type: "OFFERING" },
@@ -225,6 +221,8 @@ export default {
       } catch (error) {
         handlerRequest(false, error);
         this.$emit("handlerRequest", this.alert);
+      } finally {
+        this.loading = false;
       }
     },
     handlerAddCard(success, error) {
@@ -238,6 +236,7 @@ export default {
       };
     },
     async addCard(card) {
+      this.loading = true;
       const payload = {
         cardIds: [card.id],
       };
@@ -248,6 +247,8 @@ export default {
       } catch (error) {
         this.handlerAddCard(false, error);
         this.$emit("handlerAdition", this.alert);
+      } finally {
+        this.loading = false;
       }
     },
     async getMyCards() {
@@ -266,6 +267,11 @@ export default {
         console.log(error);
       }
       this.loading = false;
+    },
+  },
+  computed: {
+    _isLoading() {
+      return this.loading || this.externalLoading;
     },
   },
 };

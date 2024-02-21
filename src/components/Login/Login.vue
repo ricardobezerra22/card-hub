@@ -3,26 +3,28 @@
     <div>
       <v-toolbar dark density="comfortable" elevation="3" class="toolbar">
         <v-icon icon="mdi-shopping pl-3" />
-        <v-toolbar-title>Marketplace</v-toolbar-title>
-        <v-toolbar-title v-if="havePermissions"
-          >Bem-vindo(a) {{ username }} <v-icon icon="mdi-human-greeting"
+        <v-toolbar-title>{{ marketPlace }}</v-toolbar-title>
+        <v-toolbar-title v-if="havePermissions">
+          {{ welcomeGreetings + " " + username }}
+          <v-icon icon="mdi-human-greeting"
         /></v-toolbar-title>
-        <LoginForms v-if="!havePermissions" @handlerLogin="successRegister" />
+        <LoginForms v-if="!havePermissions" @handlerLogin="userLoged" />
 
         <v-btn v-else @click="logout()">
-          <v-icon icon="mdi-logout" /> Logout
+          <v-icon icon="mdi-logout" /> {{ logoutText }}
         </v-btn>
       </v-toolbar>
       <v-card>
         <v-tabs class="tabs" v-model="tab" background-color="primary">
           <v-tab value="all-cards"
-            ><v-icon icon="mdi-cards" />Todas as Cartas</v-tab
+            ><v-icon icon="mdi-cards" />{{ allCardsOfMarket }}</v-tab
           >
           <v-tab v-if="havePermissions" value="my-cards"
-            ><v-icon icon="mdi-account-card" />Minhas Cartas</v-tab
+            ><v-icon icon="mdi-account-card" /> {{ ownCards }}</v-tab
           >
-          <v-tab v-if="havePermissions" value="request-cards"
-            ><v-icon icon="mdi-card-account-mail " /> Solicitações</v-tab
+          <v-tab value="request-cards"
+            ><v-icon icon="mdi-card-account-mail " />
+            {{ openNegotiation }}</v-tab
           >
         </v-tabs>
 
@@ -32,17 +34,26 @@
               <CardList
                 :isUserHavePerms="havePermissions"
                 :cards="allCards"
+                :externalLoading="loading"
                 @handlerRequest="resultOfRequest"
                 @handlerAdition="resultOfAdition"
               />
             </v-window-item>
 
             <v-window-item value="my-cards">
-              <CardList :isOwnedPage="true" :cards="myCards" />
+              <CardList
+                :isOwnedPage="true"
+                :cards="myCards"
+                :externalLoading="loading"
+              />
             </v-window-item>
 
             <v-window-item value="request-cards">
-              <RequestedCards :trades="tradeCards" />
+              <RequestedCards
+                :isUserHaverPerms="havePermissions"
+                :trades="tradeCards"
+                @handlerDeleteTrade="handlerDeleteTrade"
+              />
             </v-window-item>
           </v-window>
         </v-card-text>
@@ -60,7 +71,7 @@
 
 <script>
 import LoginForms from "./Partials/LoginForms/LoginForms.vue";
-
+import { useAuthStore } from "@/store/app.js";
 import CardList from "@/components/Login/Partials/CardList/CardList.vue";
 import RequestedCards from "@/components/Login/Partials/RequestedCards/RequestedCards.vue";
 import {
@@ -82,16 +93,24 @@ export default {
       tradeCards: [],
       page: 0,
       rpp: 10,
+      loading: false,
       alert: {
         show: false,
         type: "",
         title: "",
         text: "",
       },
-      username: "",
       havePermissions: false,
       tab: null,
       dialog: false,
+      marketPlace: "Marketplace",
+      logoutText: "Logout",
+      welcomeGreetings: "Bem-vindo(a)",
+      allCardsOfMarket: "Todas as Cartas",
+      openNegotiation: "Negociações abertas",
+      ownCards: "Minhas Cartas",
+      username: "",
+      userID: "",
     };
   },
   methods: {
@@ -100,33 +119,62 @@ export default {
         this.alert = false;
       }, 2500);
     },
-    async logout() {
-      await userLogout();
-      this.tab = "all-cards";
-      this.havePermissions = false;
+    fullGetCards() {
       this.getCards();
+      this.getMyCards();
+      this.getRequestedCards();
     },
-    async successRegister(alertObj) {
+    async logout() {
+      this.loading = true;
+      try {
+        localStorage.removeItem("token");
+        const authStore = useAuthStore();
+        authStore.clearUserData();
+        userLogout();
+        this.fullGetCards();
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.loading = false;
+        this.tab = "all-cards";
+        this.havePermissions = false;
+      }
+    },
+    handlerDeleteTrade(deleteAlert) {
+      this.alert = {
+        ...deleteAlert,
+      };
+      this.closeAlert();
+      this.getRequestedCards();
+    },
+    async userLoged(alertObj) {
       this.alert = alertObj;
       this.havePermissions = true;
       this.closeAlert();
-      this.getMyCards();
+      this.fullGetCards();
     },
     async getCards() {
+      this.loading = true;
       const payload = {
         rpp: 10,
         page: 1,
       };
-      const { data } = await getAllCards(payload);
-      this.allCards = data.list.map((card) => {
-        return {
-          ...card,
-        };
-      });
+      try {
+        const { data } = await getAllCards(payload);
+        this.allCards = data.list.map((card) => {
+          return {
+            ...card,
+          };
+        });
+      } catch (error) {
+      } finally {
+        this.loading = false;
+      }
     },
     async getMyCards() {
       try {
         const { data } = await getMyCards();
+        this.userId = data.id;
         this.username = data.name;
         this.rpp = data.rpp;
         this.page = data.page;
@@ -136,6 +184,8 @@ export default {
             ...myCards,
           };
         });
+        const authStore = useAuthStore();
+        authStore.setUserId(data.id);
       } catch (error) {
         console.log(error);
       }
@@ -147,7 +197,6 @@ export default {
       };
       const { data } = await getRequestedCards(payload);
       this.tradeCards = data.list.map((trade) => {
-        console.log(trade);
         return {
           ...trade,
         };
@@ -157,12 +206,14 @@ export default {
       this.alert = {
         ...alert,
       };
+      this.getRequestedCards();
       this.closeAlert();
     },
     resultOfAdition(alert) {
       this.alert = {
         ...alert,
       };
+      this.getMyCards();
       this.closeAlert();
     },
   },
@@ -171,9 +222,7 @@ export default {
     if (storedJwtToken) {
       this.havePermissions = true;
     }
-    this.getCards();
-    this.getMyCards();
-    this.getRequestedCards();
+    this.fullGetCards();
   },
 };
 </script>

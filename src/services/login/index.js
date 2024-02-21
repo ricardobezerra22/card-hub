@@ -37,5 +37,5 @@ export async function getRequestedCards(payload) {
   return await api.get(url);
 }
 export async function deleteRequest(payload) {
-  return await api.post(`/trades/${payload}`);
+  return await api.delete(`/trades/${payload}`);
 }

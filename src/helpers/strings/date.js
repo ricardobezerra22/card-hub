@@ -1,28 +1,26 @@
-export function calculateTimePassed(lastMessageDate) {
-  if (!lastMessageDate) return "";
+export function compareTime(dateString) {
+  const pastDate = new Date(dateString);
+  const now = new Date();
 
-  const currentDate = new Date();
-  const date = new Date(lastMessageDate);
-  const difference = currentDate - date;
+  const timeDifferenceInMilliseconds = now - pastDate;
+  const secondsPassed = Math.floor(timeDifferenceInMilliseconds / 1000);
+  const minutesPassed = Math.floor(secondsPassed / 60);
+  const hoursPassed = Math.floor(minutesPassed / 60);
+  const daysPassed = Math.floor(hoursPassed / 24);
+  const monthsPassed = Math.floor(daysPassed / 30);
+  const yearsPassed = Math.floor(daysPassed / 365);
 
-  const seconds = Math.floor(difference / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-  const months = Math.floor(days / 30);
-  const years = Math.floor(months / 12);
-
-  if (seconds < 60) {
-    return seconds === 1 ? "1 segundo atrás" : seconds + " segundos atrás";
-  } else if (minutes < 60) {
-    return minutes === 1 ? "1 minuto atrás" : minutes + " minutos atrás";
-  } else if (hours < 24) {
-    return hours === 1 ? "1 hora atrás" : hours + " horas atrás";
-  } else if (days < 30) {
-    return days === 1 ? "1 dia atrás" : days + " dias atrás";
-  } else if (months < 12) {
-    return months === 1 ? "1 mês atrás" : months + " meses atrás";
+  if (yearsPassed > 0) {
+    return `${yearsPassed} ano${yearsPassed > 1 ? "s" : ""} atrás`;
+  } else if (monthsPassed > 0) {
+    return `${monthsPassed} mês${monthsPassed > 1 ? "es" : ""} atrás`;
+  } else if (daysPassed > 0) {
+    return `${daysPassed} dia${daysPassed > 1 ? "s" : ""} atrás`;
+  } else if (hoursPassed > 0) {
+    return `${hoursPassed} hora${hoursPassed > 1 ? "s" : ""} atrás`;
+  } else if (minutesPassed > 0) {
+    return `${minutesPassed} minuto${minutesPassed > 1 ? "s" : ""} atrás`;
   } else {
-    return years === 1 ? "1 ano atrás" : years + " anos atrás";
+    return `${secondsPassed} segundo${secondsPassed > 1 ? "s" : ""} atrás`;
   }
 }
