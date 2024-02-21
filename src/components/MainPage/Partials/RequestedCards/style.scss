@@ -11,6 +11,13 @@
   // background-image: url(../../../../assets/Heading.png);
   // background-position: center;
   // background-size: cover;
+  @media screen and (max-width: 600px) {
+    height: 1000px;
+    flex-direction: column;
+  }
+  @media screen and (max-width: 768px) {
+    gap: 0.5rem;
+  }
 }
 
 .buttons-container {
