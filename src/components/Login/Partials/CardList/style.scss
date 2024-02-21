@@ -1,5 +1,5 @@
 .e-commerce-card {
-  height: 400px;
+  height: 300px;
   overflow-y: auto;
 }
 
@@ -55,4 +55,8 @@
   display: flex;
   justify-content: center;
   padding: 1rem;
+}
+
+.image {
+  padding-top: 0.1875rem;
 }

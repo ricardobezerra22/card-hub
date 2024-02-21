@@ -13,13 +13,13 @@ export function calculateTimePassed(lastMessageDate) {
   const years = Math.floor(months / 12);
 
   if (seconds < 60) {
-    return seconds + " segundos atrás";
+    return seconds === 1 ? "1 segundo atrás" : seconds + " segundos atrás";
   } else if (minutes < 60) {
-    return minutes + " minutos atrás";
+    return minutes === 1 ? "1 minuto atrás" : minutes + " minutos atrás";
   } else if (hours < 24) {
-    return hours + " horas atrás";
+    return hours === 1 ? "1 hora atrás" : hours + " horas atrás";
   } else if (days < 30) {
-    return days + " dias atrás";
+    return days === 1 ? "1 dia atrás" : days + " dias atrás";
   } else if (months < 12) {
     return months === 1 ? "1 mês atrás" : months + " meses atrás";
   } else {

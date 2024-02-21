@@ -120,7 +120,7 @@ export default {
       this.alert = {
         show: true,
         type: "success",
-        title: "Bem-vindo ao nosso marketplace!",
+        title: "Bem-vindo(a) ao nosso marketplace!",
         text: "",
       };
       setTimeout(() => {

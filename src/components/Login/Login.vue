@@ -5,11 +5,11 @@
         <v-icon icon="mdi-shopping pl-3" />
         <v-toolbar-title>Marketplace</v-toolbar-title>
         <v-toolbar-title v-if="havePermissions"
-          >Bem-vindo {{ username }} <v-icon icon="mdi-heart"
+          >Bem-vindo(a) {{ username }} <v-icon icon="mdi-human-greeting"
         /></v-toolbar-title>
         <LoginForms v-if="!havePermissions" @handlerLogin="successRegister" />
 
-        <v-btn v-else @click="userLogout()">
+        <v-btn v-else @click="logout()">
           <v-icon icon="mdi-logout" /> Logout
         </v-btn>
       </v-toolbar>
@@ -42,7 +42,7 @@
             </v-window-item>
 
             <v-window-item value="request-cards">
-              <RequestedCards :cardss="tradeCards" />
+              <RequestedCards :trades="tradeCards" />
             </v-window-item>
           </v-window>
         </v-card-text>
@@ -100,16 +100,16 @@ export default {
         this.alert = false;
       }, 2500);
     },
-    async userLogout() {
+    async logout() {
       await userLogout();
       this.tab = "all-cards";
-      this.getCards();
       this.havePermissions = false;
+      this.getCards();
     },
     async successRegister(alertObj) {
       this.alert = alertObj;
-      this.closeAlert();
       this.havePermissions = true;
+      this.closeAlert();
       this.getMyCards();
     },
     async getCards() {
@@ -142,17 +142,14 @@ export default {
     },
     async getRequestedCards() {
       const payload = {
-        rpp: this.rpp,
-        page: this.page,
+        rpp: 10,
+        page: 1,
       };
       const { data } = await getRequestedCards(payload);
       this.tradeCards = data.list.map((trade) => {
+        console.log(trade);
         return {
-          tradeCards: trade.tradeCards.map((tradeCard) => {
-            return {
-              ...tradeCard,
-            };
-          }),
+          ...trade,
         };
       });
     },
@@ -176,6 +173,7 @@ export default {
     }
     this.getCards();
     this.getMyCards();
+    this.getRequestedCards();
   },
 };
 </script>

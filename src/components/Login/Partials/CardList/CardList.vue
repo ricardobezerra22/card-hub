@@ -14,7 +14,9 @@
         </div>
 
         <v-card elevation="3" class="e-commerce-card">
-          <v-img :src="card.imageUrl" aspect-ratio="1.1"></v-img>
+          <div class="image">
+            <v-img :src="card.imageUrl" aspect-ratio="2"></v-img>
+          </div>
           <div class="card-container">
             <h3>{{ card.name }}</h3>
 

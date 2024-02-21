@@ -1,10 +1,29 @@
-.e-commerce-card {
-  /* Espaçamento entre os cartões */
-
-  height: 400px; /* Altura fixa para os cartões */
-  overflow-y: auto; /* Adiciona barra de rolagem vertical se o conteúdo exceder a altura */
+.card-trade-container {
+  height: 350px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  align-content: center;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  // background-image: url(../../../../assets/Heading.png);
+  // background-position: center;
+  // background-size: cover;
 }
 
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+.action-buttons {
+  text-transform: none;
+  justify-content: center;
+}
 .card-container {
   display: flex;
   flex-direction: column;
@@ -12,10 +31,26 @@
   align-content: center;
   justify-content: center;
   align-items: center;
-  gap: 16px;
-  padding-top: 11px;
+  gap: 1rem;
+
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.subtitle {
-  white-space: break-spaces;
+.v-card-title {
+  display: flex;
+  justify-content: center;
+}
+.image {
+  padding-top: 0.5rem;
+}
+.infoRequested {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 0.5rem;
 }
