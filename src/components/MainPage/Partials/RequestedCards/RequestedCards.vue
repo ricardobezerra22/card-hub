@@ -181,8 +181,7 @@ export default {
         return value.substring(0, maxLength) + "...";
       } else return value;
     },
-    truncatedTitle(value) {
-      const maxLength = 20;
+    truncatedTitle(value, maxLength = 20) {
       if (value.length > maxLength) {
         return value.substring(0, maxLength) + "...";
       } else return value;

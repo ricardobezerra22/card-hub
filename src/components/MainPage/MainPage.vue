@@ -66,14 +66,13 @@
     :type="alert.type"
     :alert="alert.show"
   />
-  <v-pagination v-model="page" :length="rpp" rounded="circle"></v-pagination>
 </template>
 
 <script>
 import LoginForms from "./Partials/LoginForms/LoginForms.vue";
 import { useAuthStore } from "@/store/app.js";
-import CardList from "@/components/Login/Partials/CardList/CardList.vue";
-import RequestedCards from "@/components/Login/Partials/RequestedCards/RequestedCards.vue";
+import CardList from "@/components/MainPage/Partials/CardList/CardList.vue";
+import RequestedCards from "@/components/MainPage/Partials/RequestedCards/RequestedCards.vue";
 import {
   getAllCards,
   getMyCards,

@@ -1,10 +1,8 @@
 <template>
-  <Login />
+  <MainPage />
 </template>
 
 <script setup>
-import Login from "@/components/Login/Login.vue";
-
-//
+import MainPage from "@/components/MainPage/MainPage.vue";
 </script>
 <style scoped src="./style.scss"></style>

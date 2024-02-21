@@ -164,23 +164,13 @@ export default {
     };
   },
   methods: {
-    truncatedDescription(value) {
-      const maxLength = 30;
+    truncatedDescription(value, maxLength = 30) {
       if (value.length > maxLength) {
         return value.substring(0, maxLength) + "...";
-      } else {
-        return value;
-      }
+      } else return value;
     },
     dateText(date) {
       return `Criada ${compareTime(date)}`;
-    },
-    conversionToLocale(dateISO8601) {
-      const date = new Date(dateISO8601);
-      const year = date.getUTCFullYear();
-      const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-      const day = String(date.getUTCDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
     },
     showSnackbar() {
       this.snackbar = true;
@@ -218,8 +208,9 @@ export default {
         this.handlerRequest(true);
         this.$emit("handlerRequest", this.alert);
         this.requestModal = false;
+        this.selectedOffering = null;
       } catch (error) {
-        handlerRequest(false, error);
+        this.handlerRequest(false, error);
         this.$emit("handlerRequest", this.alert);
       } finally {
         this.loading = false;

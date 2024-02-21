@@ -51,7 +51,7 @@
   </v-btn>
 </template>
 <script>
-import RegisterForm from "@/components/Login/Partials/RegisterForm/RegisterForm.vue";
+import RegisterForm from "@/components/MainPage/Partials/RegisterForm/RegisterForm.vue";
 import { userLogin } from "@/services/login/index.js";
 export default {
   name: "LoginForms",
@@ -67,7 +67,6 @@ export default {
         title: "",
         text: "",
       },
-
       Login: "Login",
       loginForm: {
         email: "",
@@ -131,7 +130,6 @@ export default {
     },
     unsuccessRegister(error) {
       this.dialog = false;
-      // Refactored code
       this.alert = {
         show: true,
         title: "Erro ao realizar o login!",
