@@ -1,5 +1,6 @@
+@import "@/styles/variables.scss";
 .headline {
-  color: #1c64c4;
+  color: $primary-color;
   padding: 1rem;
 }
 .dialog-action-buttons {
@@ -7,10 +8,11 @@
   justify-content: flex-end;
 }
 .cancel-dialog-button {
-  color: red !important;
+  color: $cancel-color !important;
   background-color: white;
 }
 
 .signup-button {
   width: 100%;
+  text-align: center;
 }

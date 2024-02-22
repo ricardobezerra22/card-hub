@@ -1,6 +1,6 @@
 <template>
   <v-container v-if="trades.length === 0">
-    <h3 class="text-center">Ainda não existem solicitações</h3>
+    <h3 class="text-center">{{ emptyStageRequested }}</h3>
   </v-container>
   <v-container v-else>
     <v-skeleton-loader
@@ -51,9 +51,12 @@
           </v-card>
         </div>
         <div class="infoRequested">
-          <v-chip variant="outlined">
-            Solicitada {{ dateText(trade.createdAt) }} por:
-            {{ trade.user.name }}</v-chip
+          <v-chip variant="elevated" color="primary" class="chip-requested">
+            {{
+              `${requested} ${dateText(trade.createdAt)} ${by} ${
+                trade.user.name
+              }`
+            }}</v-chip
           >
           <div class="group-button-with-tooltip">
             <DefaultButton
@@ -161,6 +164,9 @@ export default {
       deleteModal: false,
       loading: false,
       isUserAuthor: false,
+      requested: "Solicitada",
+      by: "por",
+      emptyStageRequested: "Ainda não existem solcitações",
       tooltipAuthor: "Apenas o autor da solicitação pode exclui-la",
       tradeId: "",
       confirmDelete: "Excluir",

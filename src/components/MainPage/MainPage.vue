@@ -146,11 +146,14 @@ export default {
       this.closeAlert();
       this.getRequestedCards();
     },
-    async userLoged(alertObj) {
+    userLoged(alertObj) {
+      console.log(alertObj);
       this.alert = alertObj;
-      this.havePermissions = true;
       this.closeAlert();
-      this.fullGetCards();
+      if (alertObj.type === "success") {
+        this.havePermissions = true;
+        this.fullGetCards();
+      }
     },
     async getCards() {
       this.loading = true;

@@ -1,11 +1,12 @@
+@import "@/styles/variables.scss";
 .main-container {
   max-width: 100% !important;
   padding: 0rem !important;
-  background: linear-gradient(to bottom, #1c64c4, #ffffff);
+  background: $default-gradient;
 }
 .toolbar {
-  background-color: #1c64c4;
-  color: white;
+  background-color: $primary-color;
+  color: $white-color;
   font-family: Poppins, sans-serif;
 }
 

@@ -1,5 +1,8 @@
 <template>
-  <v-container>
+  <v-container v-if="cards.length === 0">
+    <h3 class="text-center">Ainda não existem cartas</h3>
+  </v-container>
+  <v-container v-else>
     <v-row>
       <v-col
         v-for="(card, index) in cards"
@@ -86,7 +89,7 @@
       <v-autocomplete
         v-model="selectedOffering"
         class="dialog-autocomplete"
-        label="Selecione a carta que deseja oferecer"
+        :label="selectPeopleToOffer"
         :items="cardOffering"
         chips
         closable-chips
@@ -151,6 +154,7 @@ export default {
       loading: false,
       cardId: "",
       cardOffering: [],
+      selectPeopleToOffer: "Selecione a carta que deseja oferecer",
       ownedCard: "Adquirida",
       snackbarWarning:
         "Você não pode solicitar troca ou adicionar essa carta ao seudeck. Faça login ou cadastro para negocia-la.",
@@ -186,13 +190,23 @@ export default {
       this.requestModal = false;
     },
     handlerRequest(success, error) {
+      let errorMessage = "";
+
+      if (!success) {
+        if (error?.response?.data?.message) {
+          errorMessage = error.response.data.message;
+
+          if (errorMessage.includes("Unique constraint failed on the fields")) {
+            errorMessage = `Você já possui essa carta e não pode realizar a troca pela mesma carta `;
+          }
+        } else return errorMessage;
+      }
+
       this.alert = {
         show: true,
         type: success ? "success" : "error",
         title: success ? "Troca solicitada!" : "Erro ao solicitar troca!",
-        text: success
-          ? "Agora vá em solicitações!'"
-          : error.response.data.message,
+        text: success ? "Agora vá em solicitações!" : errorMessage,
       };
     },
     async requestCard() {

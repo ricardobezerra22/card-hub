@@ -10,7 +10,7 @@
         >{{ subtitle }}</v-card-subtitle
       >
       <slot> </slot>
-      <v-card-actions class="dialog-action-buttons">
+      <v-card-actions v-if="haveActions" class="dialog-action-buttons">
         <v-btn :color="typeButton" type="submit" @click="submit">
           {{ submitText }}</v-btn
         >
@@ -56,6 +56,10 @@ export default {
     typeButton: {
       type: String,
       default: "primary",
+    },
+    haveActions: {
+      type: Boolean,
+      default: true,
     },
   },
   methods: {

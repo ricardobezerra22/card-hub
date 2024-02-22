@@ -1,3 +1,4 @@
+@import "@/styles/variables.scss";
 .container-buttons {
   display: flex;
   flex-direction: column;
@@ -17,7 +18,7 @@
 }
 .main-container {
   max-width: 100% !important;
-  background: linear-gradient(to bottom, #1c64c4, #ffffff);
+  background: $default-gradient;
 }
 
 .card-box {
@@ -27,8 +28,13 @@
   }
 }
 .headline {
-  color: #1c64c4;
+  color: $primary-color;
   padding: 1rem;
+  text-align: center;
+}
+.button-container {
+  display: flex;
+  justify-content: center;
 }
 
 .register-form {
@@ -40,7 +46,7 @@
   align-items: center;
 }
 .hint-register {
-  color: #1c64c4 !important;
+  color: $primary-color !important;
   display: flex !important;
   justify-content: center !important;
   white-space: nowrap !important;

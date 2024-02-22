@@ -1,3 +1,5 @@
+@import "@/styles/variables.scss";
+
 .card-trade-container {
   height: 350px;
   overflow-y: auto;
@@ -8,18 +10,21 @@
   align-content: center;
   flex-wrap: nowrap;
   flex-direction: row;
-  // background-image: url(../../../../assets/Heading.png);
-  // background-position: center;
-  // background-size: cover;
+  background: $default-gradient;
+  box-shadow: 0 0.125rem 1rem 0 rgba(0, 0, 0, 0.25);
+  margin: 3.125rem auto;
+
   @media screen and (max-width: 600px) {
-    height: 1000px;
+    height: 700px;
     flex-direction: column;
   }
   @media screen and (max-width: 768px) {
     gap: 0.5rem;
   }
 }
-
+.chip-requested {
+  color: white;
+}
 .buttons-container {
   display: flex;
   justify-content: center;
@@ -63,7 +68,7 @@
 }
 
 :deep(.headline) {
-  color: red !important;
+  color: $cancel-color !important;
 }
 .group-button-with-tooltip {
   display: flex;

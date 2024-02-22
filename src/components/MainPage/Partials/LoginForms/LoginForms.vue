@@ -1,39 +1,36 @@
 <template>
-  <v-btn variant="text" class="signup-button">
+  <v-btn variant="text" class="signup-button" @click="openModal()">
     <v-icon class="signup-button-icon">mdi-clipboard-account-outline</v-icon>
-    Login/Cadastro
+    {{ loginOrRegister }}
     <v-dialog
       v-model="dialog"
       transition="dialog-bottom-transition"
-      activator="parent"
       width="400"
     >
       <v-card :elevation="3">
-        <v-card-title class="headline text-center"
-          >Acessar Marketplace</v-card-title
-        >
+        <v-card-title class="headline">{{ accessMarketplace }}</v-card-title>
         <v-card-text>
           <v-form @submit.prevent="login">
             <v-text-field
               v-model="loginForm.email"
               :rules="validationRules.email"
-              label="Insira seu e-mail"
+              :label="email"
               variant="solo"
             ></v-text-field>
             <v-text-field
               v-model="loginForm.password"
               :rules="validationRules.required"
-              label="Insira sua senha"
+              :label="password"
               type="password"
               variant="solo"
             ></v-text-field>
-            <v-container class="d-flex justify-center">
+            <v-container class="button-container">
               <v-btn
                 width="100%"
                 color="primary"
                 class="submit-button"
                 type="submit"
-                >{{ Login }}</v-btn
+                >{{ loginAccess }}</v-btn
               >
             </v-container>
           </v-form>
@@ -61,13 +58,18 @@ export default {
   data() {
     return {
       dialog: false,
+      alertEmit: {},
       alert: {
         show: false,
         type: "",
         title: "",
         text: "",
       },
-      Login: "Login",
+      loginOrRegister: "Login/Cadastro",
+      loginAccess: "Login",
+      accessMarketplace: "Acessar Marketplace",
+      password: "Insira sua senha",
+      email: "Insira sua email",
       loginForm: {
         email: "",
         password: "",
@@ -85,16 +87,15 @@ export default {
           (value) => !!value || "Campo obrigatório!",
           (value) => (value && value.length >= 3) || "Mínimo de 3 caracteres!",
         ],
-        confirmPassword: [
-          (value) => !!value || "Campo obrigatório!",
-          (value) =>
-            value === this.registerForm.password ||
-            "As senhas precisam ser iguais!",
-        ],
       },
     };
   },
   methods: {
+    openModal() {
+      this.loginForm.email = "";
+      this.loginForm.password = "";
+      this.dialog = true;
+    },
     handleRegister(alertContent) {
       this.alert = alertContent;
       setTimeout(() => {
@@ -104,37 +105,15 @@ export default {
     closeAlert() {
       this.alert = false;
     },
-    resetRegister() {
-      this.registerForm = {
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      };
-      this.dialog = false;
-    },
-    successRegister() {
-      this.dialog = false;
-
-      this.alert = {
+    handlerLogin(success, error) {
+      this.dialog = !success;
+      this.alertEmit = {
         show: true,
-        type: "success",
-        title: "Bem-vindo(a) ao nosso marketplace!",
-        text: "",
-      };
-      setTimeout(() => {
-        this.closeAlert();
-      }, 2500);
-
-      this.$emit("handlerLogin", this.alert);
-    },
-    unsuccessRegister(error) {
-      this.dialog = false;
-      this.alert = {
-        show: true,
-        title: "Erro ao realizar o login!",
-        text: error.response.data.message,
-        type: "error",
+        type: success ? "success" : "error",
+        title: success ? "Login efetuado!" : "Erro ao registrar usuário!",
+        text: success
+          ? "Agora você pode negociar na nossa plataforma'"
+          : error.response.data.message,
       };
       setTimeout(() => {
         this.closeAlert();
@@ -148,11 +127,11 @@ export default {
       if (this.isLoginFormValid()) {
         try {
           await userLogin(payload);
-          this.successRegister();
-          this.$emit("handlerLogin", this.alert);
+          this.handlerLogin(true);
+          this.$emit("handlerLogin", this.alertEmit);
         } catch (error) {
-          this.unsuccessRegister(error);
-          this.$emit("handlerLogin", this.alert);
+          this.handlerLogin(false, error);
+          this.$emit("handlerLogin", this.alertEmit);
         }
       }
     },

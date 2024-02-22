@@ -1,3 +1,4 @@
+
 // Plugins
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
@@ -30,7 +31,7 @@ export default defineConfig({
     Fonts({
       google: {
         families: [{
-          name: 'Roboto',
+          name: 'Poppins',
           styles: 'wght@100;300;400;500;700;900',
         }],
       },

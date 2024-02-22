@@ -1,16 +1,19 @@
 <template>
-  <v-btn variant="text" color="primary" class="signup-button">
-    {{ actionButtons.createAccount
-    }}<v-dialog
+  <v-btn
+    variant="text"
+    color="primary"
+    class="signup-button"
+    @click="openModal()"
+  >
+    {{ actionButtons.createAccount }}
+
+    <DefaultModal
       v-model="dialog"
       transition="dialog-bottom-transition"
-      activator="parent"
-      width="400"
+      :title="registerAccount"
+      :haveActions="false"
     >
       <v-card elevation="3">
-        <v-card-title class="headline text-center">{{
-          registerAccount
-        }}</v-card-title>
         <v-card-text>
           <v-form @submit.prevent="register">
             <v-text-field
@@ -58,7 +61,7 @@
           </v-form>
         </v-card-text>
       </v-card>
-    </v-dialog>
+    </DefaultModal>
   </v-btn>
 </template>
 <script>
@@ -114,6 +117,9 @@ export default {
     };
   },
   methods: {
+    openModal() {
+      this.dialog = true;
+    },
     isRegisterFormValid() {
       return (
         this.registerForm.name &&
