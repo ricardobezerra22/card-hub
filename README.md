@@ -34,4 +34,4 @@ Para mais informações sobre como utilizar cada uma dessas tecnologias, consult
 
 ## Este projeto foi desenvolvido com o objetivo de demonstrar habilidades técnicas e práticas de desenvolvimento de aplicações web utilizando as tecnologias mencionadas acima. Se você tiver alguma dúvida ou sugestão, sinta-se à vontade para entrar em contato.
 
-## Desenvolvido por: Seu Nome
+## Desenvolvido por: Ricardo Bezerra
