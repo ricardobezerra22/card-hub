@@ -147,7 +147,6 @@ export default {
       this.getRequestedCards();
     },
     userLoged(alertObj) {
-      console.log(alertObj);
       this.alert = alertObj;
       this.closeAlert();
       if (alertObj.type === "success") {
