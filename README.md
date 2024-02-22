@@ -10,15 +10,13 @@ Para executar o projeto localmente, siga estas etapas:
 2. Clone o repositório do projeto.
 3. Abra um terminal e navegue até o diretório do projeto.
 4. Execute o seguinte comando para instalar as dependências:
-5. bash
-6. Copy code
-7. yarn
-8. Após a conclusão da instalação, execute o seguinte comando para iniciar o servidor de desenvolvimento:
-9. bash
-10. Copy code
-11. yarn dev
-12. O projeto será compilado e estará disponível localmente em seu navegador.
-13. Tecnologias Utilizadas
+5. yarn
+6. Após a conclusão da instalação, execute o seguinte comando para iniciar o servidor de desenvolvimento:
+7. yarn dev
+8. O projeto será compilado e estará disponível localmente em seu navegador.
+
+
+## Tecnologias Utilizadas
 
 ## O projeto foi desenvolvido utilizando as seguintes tecnologias:
 
