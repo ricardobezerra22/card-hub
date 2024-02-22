@@ -151,6 +151,7 @@ export default {
       this.alert = alertObj;
       this.closeAlert();
       if (alertObj.type === "success") {
+        this.tab = "my-cards";
         this.havePermissions = true;
         this.fullGetCards();
       }
