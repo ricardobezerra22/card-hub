@@ -9,11 +9,13 @@
 export default {
   name: "AlertBus",
   props: {
-    alert: Boolean,
-    closable: { Boolean, default: false },
-    type: String,
-    title: String,
-    text: String,
+    alert: {
+      type: Boolean,
+    },
+    closable: { type: Boolean, default: false },
+    type: { type: String },
+    title: { type: String },
+    text: { type: String },
   },
 };
 </script>

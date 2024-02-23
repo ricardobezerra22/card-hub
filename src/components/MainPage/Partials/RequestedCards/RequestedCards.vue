@@ -1,7 +1,6 @@
 <template>
-  <v-container v-if="trades.length === 0">
-    <h3 class="text-center">{{ emptyStageRequested }}</h3>
-  </v-container>
+  <EmptyStage v-if="trades.length === 0" :title="emptyStageRequested" />
+
   <v-container v-else>
     <v-skeleton-loader
       v-if="_isLoading"
@@ -143,11 +142,13 @@ import { deleteRequest } from "@/services/login/index.js";
 import { useAuthStore } from "@/store/app.js";
 import DefaultModal from "@/components/DefaultModal/DefaultModal.vue";
 import DefaultButton from "@/components/DefaultButton/DefaultButton.vue";
+import EmptyStage from "@/components/EmptyStage/EmptyStage.vue";
 export default {
   name: "RequestedCards",
   components: {
     DefaultButton,
     DefaultModal,
+    EmptyStage,
   },
   props: {
     trades: {

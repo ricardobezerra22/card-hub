@@ -1,7 +1,5 @@
 <template>
-  <v-container v-if="cards.length === 0">
-    <h3 class="text-center">Ainda não existem cartas</h3>
-  </v-container>
+  <EmptyStage v-if="cards.length === 0" />
   <v-container v-else>
     <v-row>
       <v-col
@@ -133,18 +131,29 @@ import {
 } from "@/services/login/index.js";
 import DefaultModal from "@/components/DefaultModal/DefaultModal.vue";
 import DefaultButton from "@/components/DefaultButton/DefaultButton.vue";
+import EmptyStage from "@/components/EmptyStage/EmptyStage.vue";
 import { compareTime } from "@/helpers/strings/date.js";
 export default {
   name: "CardList",
   components: {
     DefaultModal,
     DefaultButton,
+    EmptyStage,
   },
   props: {
-    cards: Array,
-    isUserHavePerms: Boolean,
-    isOwnedPage: Boolean,
-    externalLoading: Boolean,
+    cards: {
+      type: Array,
+      default: () => [],
+    },
+    isUserHavePerms: {
+      type: Boolean,
+    },
+    isOwnedPage: {
+      type: Boolean,
+    },
+    externalLoading: {
+      type: Boolean,
+    },
   },
   data() {
     return {
