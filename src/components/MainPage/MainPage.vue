@@ -131,6 +131,7 @@ export default {
     updatePage(e) {
       this.page = e;
       this.getCards();
+      this.getRequestedCards();
     },
     closeAlert() {
       setTimeout(() => {
@@ -215,8 +216,8 @@ export default {
     },
     async getRequestedCards() {
       const payload = {
-        rpp: 10,
-        page: 1,
+        rpp: this.rpp,
+        page: this.page,
       };
       const { data } = await getRequestedCards(payload);
       this.tradeCards = data.list.map((trade) => {
