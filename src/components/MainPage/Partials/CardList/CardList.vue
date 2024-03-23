@@ -1,6 +1,17 @@
 <template>
   <EmptyStage v-if="cards.length === 0" />
   <v-container v-else>
+    <div class="container">
+      <v-autocomplete
+        v-model="numberOfItems"
+        :label="'Items por página'"
+        :items="rpp"
+        variant="solo"
+        color="primary"
+        :loading="loading"
+        @update:model-value="updateRpp"
+      />
+    </div>
     <v-row>
       <v-col
         v-for="(card, index) in cards"
@@ -161,12 +172,14 @@ export default {
       snackbar: false,
       requestModal: false,
       loading: false,
+      numberOfItems: 4,
+      rpp: [4, 5, 10, 15, 20, 25],
       cardId: "",
       cardOffering: [],
       selectPeopleToOffer: "Selecione a carta que deseja oferecer",
       ownedCard: "Adquirida",
       snackbarWarning:
-        "Você não pode solicitar troca ou adicionar essa carta ao seudeck. Faça login ou cadastro para negocia-la.",
+        "Você não pode solicitar troca ou adicionar essa carta ao seu deck. Faça login ou cadastro para negocia-la.",
       negotiateButton: "Negociar",
       closeNegotiateButton: "Fechar",
       aditionButton: "Adicionar Carta",
@@ -177,6 +190,9 @@ export default {
     };
   },
   methods: {
+    updateRpp(e) {
+      this.$emit("rppValue", e);
+    },
     truncatedDescription(value, maxLength = 30) {
       if (value.length > maxLength) {
         return value.substring(0, maxLength) + "...";
@@ -280,6 +296,7 @@ export default {
       } catch (error) {
         console.log(error);
       }
+      console.log(this.cardOffering);
       this.loading = false;
     },
   },

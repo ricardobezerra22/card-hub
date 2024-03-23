@@ -37,6 +37,7 @@
                 :externalLoading="loading"
                 @handlerRequest="resultOfRequest"
                 @handlerAdition="resultOfAdition"
+                @rppValue="updateRpp"
               />
             </v-window-item>
 
@@ -45,6 +46,7 @@
                 :isOwnedPage="true"
                 :cards="myCards"
                 :externalLoading="loading"
+                @rppValue="updateRpp"
               />
             </v-window-item>
 
@@ -65,6 +67,14 @@
     :text="alert.text"
     :type="alert.type"
     :alert="alert.show"
+  />
+  <v-pagination
+    :length="_numberOfPages"
+    rounded
+    v-model="page"
+    @next="updatePage"
+    @prev="updatePage"
+    @update:model-value="updatePage"
   />
 </template>
 
@@ -90,8 +100,8 @@ export default {
       allCards: [],
       myCards: [],
       tradeCards: [],
-      page: 0,
-      rpp: 10,
+      page: 1,
+      rpp: 4,
       loading: false,
       alert: {
         show: false,
@@ -113,6 +123,15 @@ export default {
     };
   },
   methods: {
+    updateRpp(e) {
+      this.rpp = e;
+      this.page = 1;
+      this.getCards();
+    },
+    updatePage(e) {
+      this.page = e;
+      this.getCards();
+    },
     closeAlert() {
       setTimeout(() => {
         this.alert = false;
@@ -158,17 +177,19 @@ export default {
     async getCards() {
       this.loading = true;
       const payload = {
-        rpp: 10,
-        page: 1,
+        rpp: this.rpp,
+        page: this.page,
       };
       try {
         const { data } = await getAllCards(payload);
+        console.log(data);
         this.allCards = data.list.map((card) => {
           return {
             ...card,
           };
         });
       } catch (error) {
+        console.log(error);
       } finally {
         this.loading = false;
       }
@@ -217,6 +238,11 @@ export default {
       };
       this.getMyCards();
       this.closeAlert();
+    },
+  },
+  computed: {
+    _numberOfPages() {
+      return 150 / this.rpp;
     },
   },
   mounted() {

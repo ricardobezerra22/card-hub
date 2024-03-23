@@ -5,10 +5,18 @@
  */
 
 // Composables
-import { createRouter, createWebHistory } from 'vue-router/auto'
+import RequestedCards from "@/components/MainPage/Partials/RequestedCards/RequestedCards.vue";
+import { createRouter, createWebHistory } from "vue-router/auto";
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-})
+  routes: [
+    {
+      path: "/requested-cards",
+      name: "requested",
+      component: RequestedCards,
+    },
+  ],
+});
 
-export default router
+export default router;

@@ -15,7 +15,12 @@
   gap: 1rem;
   padding-top: 0.6875rem;
 }
-
+.container {
+  max-width: 12.5rem;
+  @media screen and (max-width: 768px) {
+    max-width: 100%;
+  }
+}
 .subtitle {
   white-space: break-spaces;
 }
