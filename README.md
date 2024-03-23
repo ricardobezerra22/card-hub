@@ -3,49 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Card Hub</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    background-color: #f9f9f9;
-    color: #333;
-    margin: 0;
-    padding: 0;
-  }
-
-  header, main, footer {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
-  }
-
-  h1, h2 {
-    color: #333;
-  }
-
-  ol, ul {
-    padding-left: 20px;
-  }
-
-  a {
-    color: #007bff;
-    text-decoration: none;
-  }
-
-  footer p:last-child {
-    margin-bottom: 0;
-  }
-
-  .tech {
-    font-weight: bold;
-    color: #4CAF50; /* Green */
-  }
-</style>
 </head>
 <body>
 
